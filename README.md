@@ -11,6 +11,8 @@ Clinton Township, MI
 | Project | Description |
 |----------|--------------|
 | [**Clinton Township Elections Dashboard**](https://cheung121.github.io/analytics-portfolio/projects/clinton-township-elections-dashboard/) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
+| [**Yahtzee Strategy Simulation**](https://cheung121.github.io/analytics-portfolio/projects/yahtzee-simulation-strategies/) | Monte Carlo simulation comparing Yahtzee scoring strategies (Greedy, Balanced, Bonus-First) using Python and expected value modeling. |
+
 
 
 ---

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinton Township Voting History</title>
+
+  <!-- Load Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Load Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ct-navy': '#0A2042',
+            'ct-blue': '#004A9F',
+            'ct-lightblue': '#0094D9',
+            'ct-gray': '#F3F4F6',
+          },
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <style>
+    .card {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                  0 2px 4px -2px rgba(0, 0, 0, 0.06);
+    }
+  </style>
+</head>
+<body class="bg-ct-gray min-h-screen p-4 sm:p-8 font-sans">
+  <div class="max-w-7xl mx-auto">
+    <header class="mb-8 flex items-center space-x-4">
+      <img src="CT logo.png" alt="Clinton Township Logo" class="h-16">
+      <div>
+        <h1 class="text-4xl font-extrabold text-ct-navy mb-2">Clinton Township Voting History</h1>
+        <p class="text-lg text-gray-600" id="dateRangeHeader">
+          Analyzing Turnout and Voting Methods Over Time
+        </p>
+      </div>
+    </header>
+
+    <!-- Controls -->
+    <div class="mb-8 p-6 bg-white rounded-xl card grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <label for="electionTypeFilter" class="block text-sm font-medium text-gray-700 mb-1">
+          Filter by Election Type
+        </label>
+        <select id="electionTypeFilter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 
+          focus:outline-none focus:ring-ct-blue focus:border-ct-blue sm:text-sm rounded-md shadow-inner">
+          <option value="All">All Elections</option>
+          <option value="General">General</option>
+          <option value="Primary">Primary</option>
+          <option value="Special">Special</option>
+        </select>
+      </div>
+      <div class="col-span-1 md:col-span-2">
+        <label for="selectedElection" class="block text-sm font-medium text-gray-700 mb-1">
+          Select Election for Detail View
+        </label>
+        <select id="selectedElection" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 
+          focus:outline-none focus:ring-ct-blue focus:border-ct-blue sm:text-sm rounded-md shadow-inner">
+        </select>
+      </div>
+    </div>
+
+    <!-- Metrics -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+      <div id="metric-turnout" class="p-6 bg-white rounded-xl card border-b-4 border-ct-blue">
+        <p class="text-sm font-medium text-gray-500">Turnout % (Selected)</p>
+        <p class="mt-1 text-3xl font-semibold text-ct-navy">--</p>
+      </div>
+      <div id="metric-votes" class="p-6 bg-white rounded-xl card border-b-4 border-ct-lightblue">
+        <p class="text-sm font-medium text-gray-500">Total Votes Cast</p>
+        <p class="mt-1 text-3xl font-semibold text-ct-navy">--</p>
+      </div>
+      <div id="metric-registered" class="p-6 bg-white rounded-xl card border-b-4 border-ct-navy">
+        <p class="text-sm font-medium text-gray-500">Registered Voters (Jurisdiction)</p>
+        <p class="mt-1 text-3xl font-semibold text-ct-navy">--</p>
+      </div>
+      <div id="context-jurisdiction" class="p-6 bg-white rounded-xl card border-b-4 border-ct-blue">
+        <p class="text-sm font-medium text-gray-500">Jurisdiction Context</p>
+        <p class="mt-1 text-lg font-medium text-ct-navy italic">--</p>
+      </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="grid grid-cols-1 lg:col-span-2 lg:grid-cols-2 gap-6">
+      <div class="bg-white p-6 rounded-xl card">
+        <h2 class="text-xl font-semibold text-ct-navy mb-4">Turnout Rate & Registered Voters History</h2>
+        <div class="h-80"><canvas id="turnoutChart"></canvas></div>
+      </div>
+      <div class="bg-white p-6 rounded-xl card">
+        <h2 class="text-xl font-semibold text-ct-navy mb-4">Ballots by Voting Method (%)</h2>
+        <div class="h-80"><canvas id="methodChart"></canvas></div>
+        <p class="text-xs text-gray-500 mt-4 text-center">*Early Voting began in 2024</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // CSV parser
+    const csvToJSON = (csv) => {
+      const lines = csv.split('\n').filter(line => line.trim() !== '');
+      const headers = lines[0].split(',').map(h => h.trim());
+      const result = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const obj = {};
+        const currentline = lines[i].split(',');
+
+        if (currentline.length === headers.length) {
+          for (let j = 0; j < headers.length; j++) {
+            const header = headers[j];
+            let value = currentline[j];
+            if (['Total_Registered_Voters','Votes_In_Person','Votes_Absentee_Mail','Votes_Early'].includes(header)) {
+              obj[header] = parseInt(value, 10) || 0;
+            } else {
+              obj[header] = value;
+            }
+          }
+          result.push(obj);
+        }
+      }
+      return result;
+    };
+
+    // Globals
+    let rawData = [];
+    let processedData = [];
+    let filteredData = [];
+    let turnoutChart, methodChart;
+    const selectedElectionDropdown = document.getElementById('selectedElection');
+    const electionTypeFilter = document.getElementById('electionTypeFilter');
+
+    // Data processing
+    const processData = (data) => {
+      return data.map(d => ({
+        ...d,
+        Total_Votes: d.Votes_In_Person + d.Votes_Absentee_Mail + d.Votes_Early,
+      })).map(d => ({
+        ...d,
+        Turnout_Rate: (d.Total_Votes / d.Total_Registered_Voters) * 100,
+      })).sort((a, b) => new Date(a.Date) - new Date(b.Date));
+    };
+
+    // Charts
+    const initTurnoutChart = () => {
+      const ctx = document.getElementById('turnoutChart').getContext('2d');
+      turnoutChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels: [], datasets: [
+          {
+            label: 'Turnout Percentage (%)',
+            data: [],
+            borderColor: '#004A9F',
+            backgroundColor: 'rgba(0,74,159,0.1)',
+            fill: false,
+            yAxisID: 'yTurnout',
+            tension: 0.3
+          },
+          {
+            label: 'Registered Voters (Count)',
+            data: [],
+            borderColor: '#0094D9',
+            backgroundColor: 'rgba(0,148,217,0.2)',
+            fill: true,
+            yAxisID: 'yRegistered',
+            type: 'bar',
+            barThickness: 10
+          }
+        ]},
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          scales: {
+            yTurnout: { type: 'linear', position: 'left', max: 100, title: { display: true, text: 'Turnout %' }},
+            yRegistered: { type: 'linear', position: 'right', title: { display: true, text: 'Registered Voters' }, grid: { drawOnChartArea: false }}
+          }
+        }
+      });
+    };
+
+    const initMethodChart = () => {
+      const ctx = document.getElementById('methodChart').getContext('2d');
+      methodChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: { labels: ['In-Person', 'Absentee/Mail', 'Early In-Person'], datasets: [{ data: [], backgroundColor: ['#004A9F','#0094D9','#0A2042'] }] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const value = context.parsed;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percent = total > 0 ? ((value / total) * 100).toFixed(1) + "%" : "0%";
+                  return `${context.label}: ${value.toLocaleString()} (${percent})`;
+                }
+              }
+            }
+          }
+        }
+      });
+    };
+
+    // Updates
+    const updateTurnoutChart = (data) => {
+      turnoutChart.data.labels = data.map(d => {
+        const date = new Date(d.Date);
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${year} (${d.Election_Type.charAt(0)})`;
+      });
+      turnoutChart.data.datasets[0].data = data.map(d => d.Turnout_Rate.toFixed(2));
+      turnoutChart.data.datasets[1].data = data.map(d => d.Total_Registered_Voters);
+      turnoutChart.update();
+    };
+
+    const updateMethodChart = (electionData) => {
+      methodChart.data.datasets[0].data = [electionData.Votes_In_Person, electionData.Votes_Absentee_Mail, electionData.Votes_Early];
+      methodChart.update();
+    };
+
+    const updateMetricCards = (electionData) => {
+      document.getElementById('metric-turnout').querySelector('p:last-child').textContent = electionData.Turnout_Rate.toFixed(1) + '%';
+      document.getElementById('metric-votes').querySelector('p:last-child').textContent = electionData.Total_Votes.toLocaleString();
+      document.getElementById('metric-registered').querySelector('p:last-child').textContent = electionData.Total_Registered_Voters.toLocaleString();
+      document.getElementById('context-jurisdiction').querySelector('p:last-child').textContent = electionData.Jurisdiction_Notes;
+    };
+
+    const updateDateRangeHeader = (data) => {
+      if (data.length === 0) return;
+      const firstYear = new Date(data[0].Date).getFullYear();
+      const lastYear = new Date(data[data.length-1].Date).getFullYear();
+      document.getElementById('dateRangeHeader').textContent = `Analyzing Turnout and Voting Methods Over Time (${firstYear} - ${lastYear})`;
+    };
+
+    const populateElectionDropdown = (data) => {
+      selectedElectionDropdown.innerHTML = '';
+      for (let i = data.length-1; i >= 0; i--) {
+        const d = data[i];
+        const option = document.createElement('option');
+        option.value = i;
+        option.textContent = `${d.Date} - ${d.Election_Name}`;
+        selectedElectionDropdown.appendChild(option);
+      }
+      selectedElectionDropdown.value = data.length-1;
+    };
+
+    const handleFilterChange = () => {
+      const filterType = electionTypeFilter.value;
+      filteredData = processedData.filter(d => filterType === 'All' || d.Election_Type === filterType);
+      populateElectionDropdown(filteredData);
+      updateTurnoutChart(filteredData);
+      handleElectionSelect();
+    };
+
+    const handleElectionSelect = () => {
+      const selectedIndex = parseInt(selectedElectionDropdown.value);
+      if (selectedIndex >= 0 && selectedIndex < filteredData.length) {
+        const selectedData = filteredData[selectedIndex];
+        updateMetricCards(selectedData);
+        updateMethodChart(selectedData);
+      }
+    };
+
+    // Load CSV and Init
+    window.onload = function () {
+      initTurnoutChart();
+      initMethodChart();
+
+      fetch("clinton_township_elections.csv")
+        .then(resp => resp.text())
+        .then(csvText => {
+          rawData = csvToJSON(csvText);
+          processedData = processData(rawData);
+          handleFilterChange();
+          updateDateRangeHeader(processedData);
+        })
+        .catch(err => console.error("Error loading CSV:", err));
+
+      electionTypeFilter.addEventListener('change', handleFilterChange);
+      selectedElectionDropdown.addEventListener('change', handleElectionSelect);
+    };
+  </script>
+</body>
+</html>

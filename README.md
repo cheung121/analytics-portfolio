@@ -11,8 +11,7 @@ Clinton Township, MI
 | Project | Description |
 |----------|--------------|
 | [**Clinton Township Elections Dashboard**](#) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
-| [**Voter Turnout Prediction (Machine Learning)**](#) | Forecasting absentee, early, and Election Day turnout using voter demographics and historical data. |
-| [**Sports Analytics – Zone Entry Tracking (MSU Hockey)**](#) | Excel, R, and Tableau analysis identifying zone entry efficiency for player performance. |
+
 
 ---
 

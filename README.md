@@ -10,7 +10,7 @@ Clinton Township, MI
 
 | Project | Description |
 |----------|--------------|
-| [**Clinton Township Elections Dashboard**](#) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
+| [**Clinton Township Elections Dashboard**](https://cheung121.github.io/analytics-portfolio/projects/clinton-township-elections-dashboard/) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
 
 
 ---

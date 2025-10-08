@@ -9,7 +9,7 @@ These visualizations were developed to support data-driven decision-making in **
 
 [![View Interactive Map](https://img.shields.io/badge/View_Interactive-Dashboard-blue?style=for-the-badge&logo=tableau)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ClintonTownshipPctDensity-November2024/Sheet2)
 
-[![Pct Density Map Preview](https://raw.githubusercontent.com/cheung121/analytics-portfolio/main/projects/tableau-visualizations/images/ct_pct_density_preview.png)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ClintonTownshipPctDensity-November2024/Sheet2)
+[![Pct Density Map Preview](https://raw.githubusercontent.com/cheung121/analytics-portfolio/main/projects/CT_Elections_Tableau/images/ct_pct_density_preview.png)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ClintonTownshipPctDensity-November2024/Sheet2)
 
 This dashboard visualizes **precinct-level voter density** across Clinton Township for the **November 2024 General Election**.  
 It highlights geographic patterns in registration, showing higher-density clusters and population centers to aid precinct planning.
@@ -20,7 +20,7 @@ It highlights geographic patterns in registration, showing higher-density cluste
 
 [![View Interactive Dashboard](https://img.shields.io/badge/View_Interactive-Dashboard-blue?style=for-the-badge&logo=tableau)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ofVotersbyVotingType-November2024/Dashboard2)
 
-[![Voting Type Dashboard Preview](https://raw.githubusercontent.com/cheung121/analytics-portfolio/main/projects/tableau-visualizations/images/voters_by_type_preview.png)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ofVotersbyVotingType-November2024/Dashboard2)
+[![Voting Type Dashboard Preview](https://raw.githubusercontent.com/cheung121/analytics-portfolio/main/projects/CT_Elections_Tableau/images/voters_by_type_preview.png)](https://public.tableau.com/app/profile/matthew.cheung6482/viz/ofVotersbyVotingType-November2024/Dashboard2)
 
 This dashboard breaks down **voter participation by method** — *Early Voting, Absentee/Mail, and Election Day In-Person* — for the **November 2024 General Election**.  
 It provides clear comparisons of participation methods and trends in voter behavior across the township.

@@ -7,6 +7,7 @@
 ## Project Overview
 
 This project applies supervised machine learning to forecast **voter turnout** and **party vote share** in the 2028 Presidential Election for Clinton Township, Michigan.  
+
 The goal was to use historical, demographic, and contextual data to anticipate resource needs and operational planning for local election administration.
 
 The project was developed as part of **ISyE 6740: Computational Data Analytics (Georgia Tech)**.  

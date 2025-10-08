@@ -1,4 +1,4 @@
-# Hi, I’m Matthew Cheung
+# Matthew Cheung
 
 **Election Coordinator | Data Analyst**
 

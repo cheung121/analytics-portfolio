@@ -38,6 +38,5 @@ It provides clear comparisons of participation methods and trends in voter behav
 ## Author
 
 **Matthew Cheung**  
-Election Data Coordinator – Clinton Township, MI  
 [cheung12@msu.edu](mailto:cheung12@msu.edu)  
 [LinkedIn](https://www.linkedin.com/in/cheung-matthew/)

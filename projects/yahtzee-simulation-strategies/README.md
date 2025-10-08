@@ -2,6 +2,8 @@
 
 **Monte Carlo simulation analyzing scoring strategies and expected value outcomes in the dice game Yahtzee.**
 
+[![Open Final Report](https://img.shields.io/badge/Open_Final_Report-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](RiggsCheungGroup28Topic12.pdf)
+
 ---
 
 ## Project Overview

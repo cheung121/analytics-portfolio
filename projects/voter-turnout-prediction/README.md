@@ -4,7 +4,7 @@
 
 ---
 
-### 📘 Project Report
+### Project Report
 
 A detailed write-up of this analysis is available in the full report below, including model selection rationale, data processing, and 2028 election forecasts.
 

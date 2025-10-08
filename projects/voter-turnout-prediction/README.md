@@ -4,6 +4,14 @@
 
 ---
 
+### 📘 Project Report
+
+A detailed write-up of this analysis is available in the full report below, including model selection rationale, data processing, and 2028 election forecasts.
+
+[![Open Final Report](https://img.shields.io/badge/Open_Final_Report-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](projects/voter-turnout-prediction/Term_Project_013.pdf)
+
+---
+
 ## Project Overview
 
 This project applies supervised machine learning to forecast **voter turnout** and **party vote share** in the 2028 Presidential Election for Clinton Township, Michigan.  

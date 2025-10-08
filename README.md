@@ -4,6 +4,18 @@
 
 Clinton Township, MI
 
+[![View Resume](https://img.shields.io/badge/View_Resume-PDF-blue?style=for-the-badge&logo=adobeacrobatreader)](Cheung_Resume.pdf)
+
+---
+
+## Education
+
+**Michigan State University** — *B.S. in Statistics, Minor in Data Science*  
+*2019 – 2023*
+
+**Georgia Institute of Technology** — *M.S. in Analytics (OMSA Program)*  
+*2024 – Present*
+
 ---
 
 ## Featured Projects

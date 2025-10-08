@@ -12,7 +12,7 @@ Clinton Township, MI
 |----------|--------------|
 | [**Clinton Township Elections Dashboard**](https://cheung121.github.io/analytics-portfolio/projects/clinton-township-elections-dashboard/) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
 | [**Yahtzee Strategy Simulation**](https://cheung121.github.io/analytics-portfolio/projects/yahtzee-simulation-strategies/) | Monte Carlo simulation comparing Yahtzee scoring strategies (Greedy, Balanced, Bonus-First) using Python and expected value modeling. |
-
+| [**Voter Turnout Prediction**](https://cheung121.github.io/analytics-portfolio/projects/voter-turnout-prediction/) | Machine learning models forecasting 2028 Clinton Township turnout and party vote share using Lasso and Linear Regression with LOOCV evaluation. |
 
 
 ---

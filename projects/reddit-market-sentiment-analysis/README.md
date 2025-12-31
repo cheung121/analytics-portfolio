@@ -79,5 +79,3 @@ A demo video and example figures are included in the repository.
   - Plotly
 
 ---
-
-## Repository Structure

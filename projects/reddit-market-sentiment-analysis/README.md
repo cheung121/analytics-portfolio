@@ -1,7 +1,7 @@
 # Reddit Market Sentiment Analysis
 
-Full Report: [PDF](report/team176report.pdf)
-Poster: [PDF](report/team176poster.pdf)
+- Full Report: [PDF](report/team176report.pdf)
+- Poster: [PDF](report/team176poster.pdf)
 
 ## Overview
 This project analyzes financial market sentiment by combining **large-scale Reddit discussions** with **financial news data** to track how investor mood evolves over time. The system transforms unstructured text into structured sentiment signals at the **ticker** and **sector** levels and presents them through an interactive visualization dashboard.

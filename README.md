@@ -22,6 +22,7 @@ Clinton Township, MI
 
 | Project | Description |
 |----------|--------------|
+| [**Macomb Township Precinct Voting Patterns**](https://cheung121.github.io/analytics-portfolio/projects/macomb-precinct-dashboard/) | GT OMSA Practicum: k-means segmentation of 24 precincts into five voting-behavior groups across four elections, with a 2028 planning scenario, in an interactive D3.js dashboard for the Macomb Township Clerk's Office. |
 | [**Reddit Market Sentiment Analysis**](https://cheung121.github.io/analytics-portfolio/projects/reddit-market-sentiment-analysis/) | End-to-end NLP system combining LLM-labeled financial news and Reddit discussions to track ticker- and sector-level market sentiment with an interactive Dash dashboard. |
 | [**Clinton Township Elections Dashboard**](https://cheung121.github.io/analytics-portfolio/projects/clinton-township-elections-dashboard/) | Interactive D3.js dashboard visualizing turnout by voting method and year. |
 | [**Yahtzee Strategy Simulation**](https://cheung121.github.io/analytics-portfolio/projects/yahtzee-simulation-strategies/) | Monte Carlo simulation comparing Yahtzee scoring strategies (Greedy, Balanced, Bonus-First) using Python and expected value modeling. |

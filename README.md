@@ -1,6 +1,6 @@
 # Matthew Cheung
 
-**Election Coordinator | Data Analyst**
+**Elections Supervisor | Data Analyst**
 
 Clinton Township, MI
 

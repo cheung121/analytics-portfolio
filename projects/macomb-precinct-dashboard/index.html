@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Precinct Voting Patterns | Macomb Township Clerk's Office</title>
+<link rel="stylesheet" href="mt.css">
+<link rel="stylesheet" href="mt-logo.css">
+<style>
+  :root { --color-fg:#1C1C1C; --color-fg-muted:#5F6368; --color-panel:#FFFFFF; --color-border-line:#E2E2E2;
+    --cds-pad-lg:24px; --cds-border:#D6D6D6; --cds-surface-popover:#FFFFFF; --cds-shadow-popover:0 2px 8px rgba(0,0,0,.15);
+    --cds-text-secondary:#5F6368; --cds-chart-grid:#ECECEC; --cds-chart-axis:#BDBDBD; --cds-dur-slow:.3s; }
+  html, body { margin:0; background:#F7F7F7; }
+  #dash-root { padding: 20px 24px 40px; }
+  .dash-select { font: inherit; font-size: 12px; font-weight: 600; text-transform: none; letter-spacing: 0; color: var(--color-fg);
+    background: #fff; border: 1px solid var(--color-border-line); border-radius: 6px; padding: 5px 8px; }
+  .mt section[hidden] { display: none; }
+</style>
+<script src="d3.min.js"></script>
+<script src="shim.js"></script>
+</head>
+<body>
+<div id="dash-root">
+
+<div class="mt">
+  <header class="mt-head">
+    <div class="mt-logo" role="img" aria-label="Macomb Township logo"></div>
+    <div class="mt-titles">
+      <p class="mt-title">Precinct Voting Patterns</p>
+      <p class="mt-sub">Macomb Township Clerk's Office</p>
+    </div>
+  </header>
+  <p class="mt-lede">The township's <b data-draw="h_np" data-source="headline" data-field="n_precincts">—</b> precincts form <b data-draw="h_ng" data-source="headline" data-field="n_groups">—</b> groups by how their voters cast ballots. The more a group relies on Absentee voting, the older its voters.</p>
+
+  <div class="tabs" role="tablist" style="margin-top: 14px; border-top: 1px solid var(--color-border-line)">
+    <button class="tab" role="tab" data-tab="overview" aria-selected="true">Overview</button>
+    <button class="tab" role="tab" data-tab="phase1" aria-selected="false">Phase 1 · History</button>
+    <button class="tab" role="tab" data-tab="phase2" aria-selected="false">Phase 2 · Precinct groups</button>
+    <button class="tab" role="tab" data-tab="phase3" aria-selected="false">Phase 3 · 2028 planning</button>
+    <button class="tab" role="tab" data-tab="method" aria-selected="false">Method</button>
+  </div>
+
+  <!-- ============ OVERVIEW ============ -->
+  <section id="overview" data-page="overview">
+    <div class="controls">
+      <label>Election
+        <select class="dash-select mt-elect" aria-label="Election shown on this page">
+          <option value="2026-11-03">Nov 2026 General</option>
+          <option value="2026-08-04">Aug 2026 Primary</option>
+          <option value="2024-11-05">Nov 2024 General</option>
+          <option value="2024-08-06">Aug 2024 Primary</option>
+        </select>
+      </label>
+    </div>
+    <div class="tiles">
+      <div class="card tile"><div class="lab">Ballots cast</div><div class="val" data-draw="e_bal" data-source="election_totals" data-field="ballots">—</div><div class="sub" data-draw="e_name" data-source="election_totals" data-field="election">—</div></div>
+      <div class="card tile"><div class="lab">Turnout</div><div class="val" data-draw="e_turn" data-source="election_totals" data-field="turnout">—</div><div class="sub" data-draw="e_name" data-source="election_totals" data-field="election">—</div></div>
+      <div class="card tile"><div class="lab">Election Day</div><div class="val" data-draw="e_ed" data-source="election_totals" data-field="pct_election_day">—</div><div class="sub" data-draw="e_name" data-source="election_totals" data-field="election">—</div></div>
+      <div class="card tile"><div class="lab">Absentee</div><div class="val" data-draw="e_av" data-source="election_totals" data-field="pct_absentee">—</div><div class="sub" data-draw="e_name" data-source="election_totals" data-field="election">—</div></div>
+      <div class="card tile"><div class="lab">Early Voting</div><div class="val" data-draw="e_ev" data-source="election_totals" data-field="pct_early">—</div><div class="sub" data-draw="e_name" data-source="election_totals" data-field="election">—</div></div>
+    </div>
+
+    <h2 id="map-heading">Precinct map</h2>
+    <div class="grid wide">
+      <div class="card" id="map-card">
+        <div class="controls">
+          <label>Color by
+            <select class="dash-select mt-metric" aria-label="Color the map by">
+              <option value="group">Precinct group</option>
+              <option value="turnout_rate">Turnout</option>
+              <option value="pct_absentee">Absentee share</option>
+              <option value="pct_early">Early Voting share</option>
+              <option value="pct_election_day">Election Day share</option>
+            </select>
+          </label>
+        </div>
+        <div class="chart map" id="map" data-draw="map" data-source="precinct_boundaries precincts precinct_elections"></div>
+      </div>
+      <div class="card" id="precinct-detail">
+        <h3>Precinct detail</h3>
+        <p class="note mt-hint">Click a precinct on the map.</p>
+        <div class="mt-detail" data-draw="detail" data-source="precincts">—</div>
+        <div class="tablebox mt-detail-table" style="margin-top: 10px">
+          <table data-source="precinct_elections" data-row-key="election_date,precinct">
+            <thead><tr><th data-field="election">Election</th><th class="num" data-field="total_votes">Ballots</th><th class="num" data-field="turnout_rate">Turnout</th><th class="num" data-field="pct_election_day">ED</th><th class="num" data-field="pct_absentee">AV</th><th class="num" data-field="pct_early">Early Voting</th></tr></thead>
+            <tbody data-draw="detail_rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <h2 id="groups-heading">The groups</h2>
+    <div class="legend" data-draw="mix_legend">—</div>
+    <div class="gcards" id="group-cards" data-draw="group_cards" data-source="groups group_age">—</div>
+  </section>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section id="phase1" data-page="phase1" hidden>
+    <div class="grid">
+      <div class="card" id="p1-turnout-card">
+        <h3>Turnout, 2002–2026</h3>
+        <p class="note">Hollow points are presidential years.</p>
+        <div class="legend" data-draw="p1_turnout_legend">—</div>
+        <div class="chart" id="p1-turnout" data-draw="p1_turnout" data-source="history"></div>
+      </div>
+      <div class="card" id="p1-mix-card">
+        <h3>How ballots were cast</h3>
+        <div class="controls">
+          <label>Election type
+            <select class="dash-select mt-p1kind" aria-label="Election type">
+              <option value="General">General</option>
+              <option value="Primary">Primary</option>
+            </select>
+          </label>
+        </div>
+        <p class="note">Early Voting began in 2024.</p>
+        <div class="legend" data-draw="mix_legend">—</div>
+        <div class="chart" id="p1-mix" data-draw="p1_mix" data-source="history"></div>
+      </div>
+    </div>
+    <div class="grid stack">
+      <div class="card" id="p1-maps-card">
+        <h3>Precinct map changes</h3>
+        <p class="note">History is shown township-wide only; precinct boundaries before 2024 differ.</p>
+        <table data-source="precinct_maps" data-row-key="period">
+          <thead><tr><th data-field="period">Period</th><th class="num" data-field="precincts">Precincts</th></tr></thead>
+          <tbody data-draw="p1_maps"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section id="phase2" data-page="phase2" hidden>
+    <div class="legend" data-draw="group_legend">—</div>
+    <div class="grid">
+      <div class="card" id="p2-scatter-card">
+        <h3>Precincts by voting profile</h3>
+        <p class="note">Nearby precincts vote alike.</p>
+        <div class="chart" id="p2-scatter" data-draw="p2_scatter" data-source="precincts"></div>
+      </div>
+      <div class="card" id="p2-mix-card">
+        <h3>Ballot method by group</h3>
+        <div class="legend" data-draw="mix_legend">—</div>
+        <div class="chart" id="p2-mix" data-draw="p2_mix" data-source="group_election_mix"></div>
+      </div>
+    </div>
+    <div class="card stack" id="p2-age-card">
+      <h3>Voters by age, by group</h3>
+      <p class="note">Age was not used to form the groups; the pattern is an independent check.</p>
+      <div class="legend" data-draw="age_legend">—</div>
+      <div class="chart" id="p2-age" data-draw="p2_age" data-source="group_age"></div>
+    </div>
+    <div class="card stack" id="p2-table-card">
+      <h3>All precincts</h3>
+      <p class="note">Four-election averages. Click a header to sort, a row to view on the map.</p>
+      <div class="tablebox">
+        <table class="mt-p2t" data-source="precincts" data-row-key="precinct">
+          <thead><tr>
+            <th data-field="precinct"><button data-sort="precinct">Pct</button></th>
+            <th data-field="poll_location"><button data-sort="poll_location">Polling place</button></th>
+            <th data-field="group_label"><button data-sort="cluster">Group</button></th>
+            <th data-field="stability"><button data-sort="elections_in_group">Consistency</button></th>
+            <th class="num" data-field="avg_pct_election_day"><button data-sort="avg_pct_election_day">Election Day</button></th>
+            <th class="num" data-field="avg_pct_absentee"><button data-sort="avg_pct_absentee">Absentee</button></th>
+            <th class="num" data-field="avg_pct_early"><button data-sort="avg_pct_early">Early Voting</button></th>
+            <th class="num" data-field="avg_turnout_rate"><button data-sort="avg_turnout_rate">Turnout</button></th>
+            <th class="num" data-field="avg_voters_60plus_share"><button data-sort="avg_voters_60plus_share">Voters 60+</button></th>
+          </tr></thead>
+          <tbody data-draw="p2_rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section id="phase3" data-page="phase3" hidden>
+    <div class="controls">
+      <label>Scenario
+        <select class="dash-select mt-scn" aria-label="2028 scenario">
+          <option value="base">Base: repeat 2024 pattern</option>
+          <option value="low">Lower turnout (2004/2016 level)</option>
+          <option value="early">Early Voting grows (+5 pts)</option>
+        </select>
+      </label>
+      <span>Planning scenario, not a forecast. See Method for assumptions.</span>
+    </div>
+    <div class="tiles">
+      <div class="card tile"><div class="lab">Projected ballots</div><div class="val" data-draw="s_tot" data-source="township_2028" data-field="total_2028">—</div><div class="sub"><span data-draw="s_pct" data-source="township_2028" data-field="pct_change_vs_2024">—</span> vs Nov 2024</div></div>
+      <div class="card tile"><div class="lab">Election Day</div><div class="val" data-draw="s_ed" data-source="township_2028" data-field="election_day_2028">—</div><div class="sub"><span data-draw="s_ed24" data-source="township_2028" data-field="election_day_2024">—</span> in Nov 2024</div></div>
+      <div class="card tile"><div class="lab">Absentee</div><div class="val" data-draw="s_av" data-source="township_2028" data-field="absentee_2028">—</div><div class="sub"><span data-draw="s_av24" data-source="township_2028" data-field="absentee_2024">—</span> in Nov 2024</div></div>
+      <div class="card tile"><div class="lab">Early Voting</div><div class="val" data-draw="s_ev" data-source="township_2028" data-field="early_2028">—</div><div class="sub"><span data-draw="s_ev24" data-source="township_2028" data-field="early_2024">—</span> in Nov 2024</div></div>
+    </div>
+    <div class="grid stack">
+      <div class="card" id="p3-surge-card">
+        <h3>Presidential-year turnout jump, by group</h3>
+        <div class="legend" data-draw="yr_legend">—</div>
+        <div class="chart" id="p3-surge" data-draw="p3_surge" data-source="presidential_vs_midterm"></div>
+      </div>
+      <div class="card" id="p3-groups-card">
+        <h3>Ballots by method: 2026 vs 2028</h3>
+        <p class="note">Extra presidential-year ballots come through Early Voting and Absentee.</p>
+        <div class="legend" data-draw="yr2_legend">—</div>
+        <div class="chart" id="p3-groups" data-draw="p3_groups" data-source="group_2028"></div>
+      </div>
+    </div>
+    <div class="card stack" id="p3-table-card">
+      <h3>2028 by precinct</h3>
+      <div class="tablebox">
+        <table data-source="scenario_2028" data-row-key="scenario,precinct">
+          <thead><tr>
+            <th data-field="precinct">Pct</th><th data-field="poll_location">Polling place</th><th data-field="group_label">Group</th>
+            <th class="num" data-field="election_day_2028">Election Day</th><th class="num" data-field="absentee_2028">Absentee</th><th class="num" data-field="early_2028">Early Voting</th>
+            <th class="num" data-field="total_2028">Total</th><th class="num" data-field="change_vs_2024">vs 2024</th>
+          </tr></thead>
+          <tbody data-draw="p3_rows"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ METHOD ============ -->
+  <section id="method" data-page="method" hidden>
+    <div class="grid">
+      <div class="card">
+        <h3>How the groups were formed</h3>
+        <ol class="steps">
+          <li>Ballots by method and turnout for each precinct in the four elections on the current map.</li>
+          <li>Each measure compared within its own election, so presidential-year turnout doesn't drive the groups.</li>
+          <li>Each precinct's profile averaged across the four elections.</li>
+          <li>Precincts grouped with k-means; the number of groups chosen with the elbow, silhouette and gap tests.</li>
+          <li>Age added afterward to describe the groups.</li>
+        </ol>
+      </div>
+      <div class="card" id="elbow-card">
+        <h3>Choosing the number of groups</h3>
+        <p class="note">Spread within groups falls steeply until five groups, then levels off.</p>
+        <div class="chart" id="m-elbow" data-draw="m_elbow" data-source="robustness"></div>
+      </div>
+    </div>
+    <div class="card stack" id="robust-card">
+      <h3>Fit and robustness by number of groups</h3>
+      <p class="note">Higher is better except within-group spread. Agreement runs from 0 (chance) to 1 (identical groups).</p>
+      <div class="tablebox">
+        <table data-source="robustness" data-row-key="k">
+          <thead><tr><th data-field="k">Groups</th><th class="num" data-field="within_group_ss">Within-group spread</th><th class="num" data-field="silhouette">Silhouette</th><th class="num" data-field="gap">Gap</th><th class="num" data-field="agree_gmm">vs mixture model</th><th class="num" data-field="agree_ward">vs hierarchical</th><th class="num" data-field="agree_drop_one_election">Drop one election</th></tr></thead>
+          <tbody data-draw="m_rob"></tbody>
+        </table>
+      </div>
+    </div>
+    <details>
+      <summary>Definitions and assumptions</summary>
+      <dl>
+        <dt>Turnout</dt><dd>Ballots ÷ registered voters. Nov 2026 registration from the Nov 3 turnout export.</dd>
+        <dt>ED / AV / Early Voting</dt><dd>Election Day, Absentee and Early Voting ballots as shares of all ballots.</dd>
+        <dt>Consistency</dt><dd>How often each election, on its own, places the precinct in its group: Stable = all 4 elections, Mostly stable = 3, Shifts = 2 or fewer.</dd>
+        <dt>2028 registration</dt><dd>Nov 2026 registration grown at each precinct's 2024–2026 rate.</dd>
+        <dt>2028 base</dt><dd>Nov 2026 turnout and ballot mix, shifted by the group's 2024-vs-2026 change.</dd>
+        <dt>Lower turnout</dt><dd>Base scaled to the lowest presidential turnout since 2004.</dd>
+        <dt>Early Voting growth</dt><dd>Five more points of ballots cast through Early Voting. A what-if.</dd>
+        <dt>Not included</dt><dd>Individual voter records, outreach history, and precinct data before the 2024 redraw.</dd>
+      </dl>
+    </details>
+  </section>
+
+</div>
+
+</div>
+<script src="mt-core.js"></script>
+<script src="mt-charts.js"></script>
+</body>
+</html>

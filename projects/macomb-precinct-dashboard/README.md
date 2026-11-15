@@ -3,7 +3,7 @@
 Interactive dashboard from my Georgia Tech OMSA Practicum (ISYE 6748, Fall 2026), sponsored by the Macomb Township Clerk's Office.
 
 - https://cheung121.github.io/analytics-portfolio/projects/macomb-precinct-dashboard/
-- 
+  
 The township's 24 precincts are grouped into five voting-behavior groups using k-means clustering on four elections (Aug 2024 Primary through Nov 2026 General), with a 2028 planning scenario built on each group's presidential-vs-midterm change.
 
 **Tabs:** Overview · Phase 1 History (2002–2026) · Phase 2 Precinct groups · Phase 3 2028 planning · Method
